@@ -1,0 +1,1264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PbPDFlib Library 操作库参考文档</title>
+  <style>
+    body { font-family: "Segoe UI", Arial, sans-serif; margin: 0; padding: 0; background: #f8f8f8; color: #333; }
+    .header { background: linear-gradient(135deg, #c0392b 0%, #96281b 100%); color: white; padding: 30px; text-align: center; }
+    .header h1 { margin: 0; font-size: 2.2em; }
+    .header .version { font-size: 1em; opacity: 0.9; margin-top: 10px; }
+    .header .author { font-size: 0.9em; opacity: 0.8; margin-top: 5px; }
+    .nav { background: #2b2b2b; padding: 15px; overflow: auto; }
+    .nav a { color: #fff; text-decoration: none; padding: 5px 15px; display: inline-block; font-size: 0.9em; }
+    .nav a:hover { background: #444; border-radius: 4px; }
+    .container { max-width: 960px; margin: 20px auto; padding: 0 20px; }
+    .section { background: white; margin: 20px 0; padding: 25px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .section h2 { color: #c0392b; border-bottom: 2px solid #e0e0e0; padding-bottom: 10px; margin-top: 0; }
+    .section h3 { color: #333; margin-top: 25px; }
+    .function-block { background: #f5f5f5; padding: 15px; margin: 15px 0; border-left: 4px solid #c0392b; border-radius: 0 4px 4px 0; }
+    .function-name { color: #c7254e; font-family: "Consolas", "Courier New", monospace; font-size: 1.1em; font-weight: bold; }
+    .function-desc { margin: 10px 0; line-height: 1.6; }
+    .function-params { margin: 10px 0; }
+    .function-params table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+    .function-params th { background: #e8e8e8; padding: 8px; text-align: left; border: 1px solid #ddd; }
+    .function-params td { padding: 8px; border: 1px solid #ddd; }
+    .return-type { background: #e8f5e9; padding: 8px; border-radius: 4px; margin: 10px 0; }
+    .example { background: #263238; color: #e0e0e0; padding: 15px; border-radius: 4px; overflow-x: auto; font-family: "Consolas", "Courier New", monospace; font-size: 0.9em; margin: 10px 0; white-space: pre; line-height: 1.6; }
+    .example .comment { color: #80cbc4; }
+    .example .keyword { color: #c792ea; }
+    .example .function { color: #82b1ff; }
+    .example .string { color: #c3e88d; }
+    .example .number { color: #f78c6c; }
+    .example .variable { color: #ffcb6b; }
+    .toc { background: white; padding: 20px; margin: 20px 0; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+    .toc h3 { margin-top: 0; }
+    .toc ul { list-style: none; padding-left: 0; }
+    .toc li { padding: 5px 0; border-bottom: 1px solid #f0f0f0; }
+    .toc a { color: #c0392b; text-decoration: none; }
+    .toc a:hover { text-decoration: underline; }
+    .note { background: #fff3cd; padding: 12px; border-left: 4px solid #ffc107; border-radius: 4px; margin: 15px 0; }
+    .note strong { color: #856404; }
+    .footer { text-align: center; padding: 20px; color: #666; font-size: 0.9em; margin-top: 40px; }
+    code { background: #f0f0f0; padding: 2px 6px; border-radius: 3px; font-family: "Consolas", "Courier New", monospace; font-size: 0.9em; }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1>PbPDFlib Library</h1>
+  <div class="version">版本 6.7</div>
+  <div class="author">作者: lcode.cn | 许可证: Apache 2.0</div>
+</div>
+
+<div class="nav">
+  <a href="#overview">概述</a>
+  <a href="#doc">文档管理</a>
+  <a href="#page">页面操作</a>
+  <a href="#text">文本绘制</a>
+  <a href="#graphics">图形绘制</a>
+  <a href="#color">颜色线条</a>
+  <a href="#gstate">图形状态</a>
+  <a href="#image">图片操作</a>
+  <a href="#font">字体操作</a>
+  <a href="#outline">书签大纲</a>
+  <a href="#annotation">注释</a>
+  <a href="#encrypt">加密权限</a>
+  <a href="#watermark">水印</a>
+  <a href="#read">PDF读取</a>
+  <a href="#pageop">页面操作</a>
+  <a href="#info">文档信息</a>
+  <a href="#examples">示例代码</a>
+  <a href="#changelog">版本历史</a>
+</div>
+
+<div class="container">
+
+  <div class="section" id="overview">
+    <h2>概述</h2>
+    <p>PbPDFlib 是一个纯 PureBasic 实现的 PDF 文件操作库，无需安装 Adobe Acrobat 或任何第三方依赖，即可创建、读取和修改 PDF 文件。</p>
+    <p>该库参考 Go 语言的 pdfcpu 项目和 C 语言的 libharu 项目移植而来，以 libharu 的 API 设计风格为主要参考，同时融合 pdfcpu 的读取/修改等高级功能。所有算法均用 PureBasic 原生实现，无第三方依赖。</p>
+    <div class="note">
+      <strong>注意：</strong>使用 PbPDFlib 库前，需要在代码开头添加 <code>XIncludeFile "PbPDFlib.pb"</code> 以引入库文件。
+    </div>
+    <h3>主要功能</h3>
+    <ul>
+      <li>创建符合 PDF 标准的文档，支持 PDF 1.2-2.0</li>
+      <li>读取和解析现有 PDF 文件</li>
+      <li>文本绘制（标准字体 + TrueType 字体 + UTF-8 编码）</li>
+      <li>图形绘制（路径/描边/填充/颜色/变换矩阵）</li>
+      <li>JPEG 和 PNG 图片加载与绘制</li>
+      <li>TrueType 字体子集化</li>
+      <li>RC4-40/RC4-128/AES-128/AES-256 加密</li>
+      <li>书签/大纲创建和修改</li>
+      <li>文本注释、链接注释、高亮注释</li>
+      <li>文本水印（旋转/透明度/对角线）</li>
+      <li>页眉/页脚</li>
+      <li>PDF 合并/拆分/提取/删除页面</li>
+      <li>扩展图形状态（透明度/混合模式）</li>
+    </ul>
+  </div>
+
+  <div class="toc">
+    <h3>函数索引</h3>
+    <ul>
+      <li><a href="#PbPDF_New">PbPDF_New</a> - 创建PDF文档对象</li>
+      <li><a href="#PbPDF_Free">PbPDF_Free</a> - 释放PDF文档对象</li>
+      <li><a href="#PbPDF_SaveToFile">PbPDF_SaveToFile</a> - 保存PDF到文件</li>
+      <li><a href="#PbPDF_AddPage">PbPDF_AddPage</a> - 添加新页面</li>
+      <li><a href="#PbPDF_Page_SetPredefinedSize">PbPDF_Page_SetPredefinedSize</a> - 设置预定义页面尺寸</li>
+      <li><a href="#PbPDF_Page_BeginText">PbPDF_Page_BeginText</a> - 开始文本对象</li>
+      <li><a href="#PbPDF_Page_ShowText">PbPDF_Page_ShowText</a> - 显示文本</li>
+      <li><a href="#PbPDF_Page_ShowTextUTF8Ex">PbPDF_Page_ShowTextUTF8Ex</a> - 显示UTF-8文本</li>
+      <li><a href="#PbPDF_LoadTTFontFromFile">PbPDF_LoadTTFontFromFile</a> - 加载TTF字体</li>
+      <li><a href="#PbPDF_LoadJPEGImageFromFile">PbPDF_LoadJPEGImageFromFile</a> - 加载JPEG图片</li>
+      <li><a href="#PbPDF_LoadPNGImageFromFile">PbPDF_LoadPNGImageFromFile</a> - 加载PNG图片</li>
+      <li><a href="#PbPDF_SetPassword">PbPDF_SetPassword</a> - 设置密码和加密</li>
+      <li><a href="#PbPDF_CreateOutline">PbPDF_CreateOutline</a> - 创建大纲项</li>
+      <li><a href="#PbPDF_LoadFromFile">PbPDF_LoadFromFile</a> - 读取PDF文件</li>
+      <li><a href="#PbPDF_MergePDFFiles">PbPDF_MergePDFFiles</a> - 合并PDF文件</li>
+    </ul>
+  </div>
+
+  <!-- ==================== 文档管理 ==================== -->
+  <div class="section" id="doc">
+    <h2>文档管理</h2>
+
+    <div class="function-block" id="PbPDF_New">
+      <div class="function-name">PbPDF_New()</div>
+      <div class="function-desc">创建一个新的 PDF 文档对象。</div>
+      <div class="return-type"><strong>返回值：</strong> PDF文档指针（PbPDF_Doc）。失败时返回 0。</div>
+      <div class="example">
+<span class="comment">; 创建一个新PDF文档</span>
+<span class="variable">*doc</span>.PbPDF_Doc = <span class="function">PbPDF_New</span>()
+<span class="keyword">If</span> <span class="variable">*doc</span>
+  <span class="comment">; 文档创建成功</span>
+<span class="keyword">EndIf</span>
+      </div>
+    </div>
+
+    <div class="function-block" id="PbPDF_Free">
+      <div class="function-name">PbPDF_Free(*doc.PbPDF_Doc)</div>
+      <div class="function-desc">释放 PDF 文档对象及其所有资源。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block" id="PbPDF_SaveToFile">
+      <div class="function-name">PbPDF_SaveToFile(*doc.PbPDF_Doc, fileName.s)</div>
+      <div class="function-desc">将 PDF 文档保存到指定文件。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fileName</td><td>String</td><td>输出文件的完整路径</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 成功返回 #PbPDF_OK，失败返回错误码。</div>
+      <div class="example">
+<span class="comment">; 保存PDF文件</span>
+<span class="keyword">If</span> <span class="function">PbPDF_SaveToFile</span>(<span class="variable">*doc</span>, <span class="string">"output.pdf"</span>) = <span class="variable">#PbPDF_OK</span>
+  <span class="function">Debug</span> <span class="string">"保存成功！"</span>
+<span class="keyword">EndIf</span>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetPDFVersion(*doc.PbPDF_Doc, version.i)</div>
+      <div class="function-desc">设置 PDF 版本。支持 PDF 1.2 到 PDF 2.0。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>version</td><td>Integer</td><td>PDF版本常量（#PbPDF_PDF_VER_12 ~ #PbPDF_PDF_VER_20）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetCompressionMode(*doc.PbPDF_Doc, mode.i)</div>
+      <div class="function-desc">设置压缩模式。可组合使用 #PbPDF_COMP_TEXT、#PbPDF_COMP_IMAGE、#PbPDF_COMP_METADATA、#PbPDF_COMP_ALL。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>mode</td><td>Integer</td><td>压缩模式标志</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_GetPageCount(*doc.PbPDF_Doc)</div>
+      <div class="function-desc">获取文档的页面总数。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面数量（整数）。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 页面操作 ==================== -->
+  <div class="section" id="page">
+    <h2>页面操作</h2>
+
+    <div class="function-block" id="PbPDF_AddPage">
+      <div class="function-name">PbPDF_AddPage(*doc.PbPDF_Doc)</div>
+      <div class="function-desc">在文档末尾添加一个新页面。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 页面对象指针。</div>
+      <div class="example">
+<span class="variable">*page</span> = <span class="function">PbPDF_AddPage</span>(<span class="variable">*doc</span>)
+<span class="function">PbPDF_Page_SetPredefinedSize</span>(<span class="variable">*page</span>, <span class="variable">#PbPDF_PAGE_SIZE_A4</span>, <span class="variable">#PbPDF_PAGE_PORTRAIT</span>)
+      </div>
+    </div>
+
+    <div class="function-block" id="PbPDF_Page_SetPredefinedSize">
+      <div class="function-name">PbPDF_Page_SetPredefinedSize(*page, pageSize.i, direction.i)</div>
+      <div class="function-desc">设置页面的预定义尺寸和方向。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>pageSize</td><td>Integer</td><td>页面尺寸常量（A3/A4/A5/Letter/Legal等）</td></tr>
+          <tr><td>direction</td><td>Integer</td><td>页面方向：#PbPDF_PAGE_PORTRAIT 或 #PbPDF_PAGE_LANDSCAPE</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetSize(*page, width.f, height.f)</div>
+      <div class="function-desc">设置页面的自定义尺寸（单位：点，1点=1/72英寸）。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>width</td><td>Float</td><td>页面宽度（点）</td></tr>
+          <tr><td>height</td><td>Float</td><td>页面高度（点）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_AddPageA4(*doc.PbPDF_Doc)</div>
+      <div class="function-desc">便捷函数：添加一个A4纵向页面并返回页面对象。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_AddPageCustom(*doc.PbPDF_Doc, width.f, height.f)</div>
+      <div class="function-desc">便捷函数：添加一个自定义尺寸页面并返回页面对象。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_GetWidth(*page) / PbPDF_Page_GetHeight(*page)</div>
+      <div class="function-desc">获取页面的宽度或高度（单位：点）。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面宽度或高度（Float）。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 文本绘制 ==================== -->
+  <div class="section" id="text">
+    <h2>文本绘制</h2>
+
+    <div class="function-block" id="PbPDF_Page_BeginText">
+      <div class="function-name">PbPDF_Page_BeginText(*page)</div>
+      <div class="function-desc">开始一个文本对象。在调用 ShowText 等文本操作前必须先调用此函数。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_EndText(*page)</div>
+      <div class="function-desc">结束当前文本对象。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetFontAndSize(*page, fontName.s, fontSize.f)</div>
+      <div class="function-desc">设置当前文本的字体和大小。fontName 为已注册的字体名称。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>fontName</td><td>String</td><td>字体名称（如 "Helvetica"、"F1" 等）</td></tr>
+          <tr><td>fontSize</td><td>Float</td><td>字体大小（点）</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="function-block" id="PbPDF_Page_ShowText">
+      <div class="function-name">PbPDF_Page_ShowText(*page, text.s)</div>
+      <div class="function-desc">在当前文本位置显示文本。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>text</td><td>String</td><td>要显示的文本</td></tr>
+        </table>
+      </div>
+      <div class="example">
+<span class="function">PbPDF_Page_BeginText</span>(<span class="variable">*page</span>)
+<span class="function">PbPDF_Page_SetFontAndSize</span>(<span class="variable">*page</span>, <span class="string">"Helvetica"</span>, 24)
+<span class="function">PbPDF_Page_MoveTextPos</span>(<span class="variable">*page</span>, 50, 750)
+<span class="function">PbPDF_Page_ShowText</span>(<span class="variable">*page</span>, <span class="string">"Hello PbPDFlib!"</span>)
+<span class="function">PbPDF_Page_EndText</span>(<span class="variable">*page</span>)
+      </div>
+    </div>
+
+    <div class="function-block" id="PbPDF_Page_ShowTextUTF8Ex">
+      <div class="function-name">PbPDF_Page_ShowTextUTF8Ex(*doc.PbPDF_Doc, *page, *font.PbPDF_Font, text.s, fontSize.f)</div>
+      <div class="function-desc">使用 TrueType 字体显示 UTF-8 编码的文本（高级接口）。自动处理字体注册、编码转换和 ToUnicode CMap 生成。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>*font</td><td>PbPDF_Font</td><td>字体对象指针（由 LoadTTFontFromFile 返回）</td></tr>
+          <tr><td>text</td><td>String</td><td>UTF-8编码的文本</td></tr>
+          <tr><td>fontSize</td><td>Float</td><td>字体大小（点）</td></tr>
+        </table>
+      </div>
+      <div class="example">
+<span class="variable">*font</span>.PbPDF_Font = <span class="function">PbPDF_LoadTTFontFromFile</span>(<span class="variable">*doc</span>, <span class="string">"C:\Windows\Fonts\msyh.ttc"</span>, <span class="variable">#True</span>)
+<span class="function">PbPDF_Page_ShowTextUTF8Ex</span>(<span class="variable">*doc</span>, <span class="variable">*page</span>, <span class="variable">*font</span>, <span class="string">"你好，世界！"</span>, 24)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_MoveTextPos(*page, x.f, y.f)</div>
+      <div class="function-desc">移动文本位置到指定坐标。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_ShowTextNextLine(*page, text.s)</div>
+      <div class="function-desc">移动到下一行并显示文本。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetCharSpace(*page, value.f)</div>
+      <div class="function-desc">设置字符间距（单位：点）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetWordSpace(*page, value.f)</div>
+      <div class="function-desc">设置词间距（单位：点）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetTextLeading(*page, value.f)</div>
+      <div class="function-desc">设置文本行距（单位：点）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetTextRenderingMode(*page, mode.i)</div>
+      <div class="function-desc">设置文本渲染模式。支持8种模式：填充(0)/描边(1)/填充+描边(2)/不可见(3)/填充+裁剪(4)/描边+裁剪(5)/填充+描边+裁剪(6)/裁剪(7)。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 图形绘制 ==================== -->
+  <div class="section" id="graphics">
+    <h2>图形绘制</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_MoveTo(*page, x.f, y.f)</div>
+      <div class="function-desc">移动当前绘图位置到指定点，开始新的路径。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_LineTo(*page, x.f, y.f)</div>
+      <div class="function-desc">从当前绘图位置画直线到指定点。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_CurveTo(*page, x1.f, y1.f, x2.f, y2.f, x3.f, y3.f)</div>
+      <div class="function-desc">从当前点画三次贝塞尔曲线到 (x3,y3)，使用 (x1,y1) 和 (x2,y2) 作为控制点。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Rectangle(*page, x.f, y.f, w.f, h.f)</div>
+      <div class="function-desc">绘制一个矩形路径。左下角为 (x,y)，宽度 w，高度 h。</div>
+      <div class="example">
+<span class="function">PbPDF_Page_Rectangle</span>(<span class="variable">*page</span>, 50, 50, 200, 100)
+<span class="function">PbPDF_Page_Stroke</span>(<span class="variable">*page</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Arc(*page, x.f, y.f, radius.f, angle1.f, angle2.f)</div>
+      <div class="function-desc">绘制弧线。圆心为 (x,y)，半径 radius，从 angle1 到 angle2（角度制）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_ClosePath(*page)</div>
+      <div class="function-desc">闭合当前路径，从当前点画直线到路径起点。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Stroke(*page)</div>
+      <div class="function-desc">描边当前路径。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Fill(*page)</div>
+      <div class="function-desc">填充当前路径（非零缠绕规则）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Eofill(*page)</div>
+      <div class="function-desc">填充当前路径（奇偶规则）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_FillStroke(*page)</div>
+      <div class="function-desc">填充并描边当前路径。</div>
+    </div>
+
+    <h3>便捷绘图函数</h3>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_DrawLine(*page, x1.f, y1.f, x2.f, y2.f)</div>
+      <div class="function-desc">绘制一条直线从 (x1,y1) 到 (x2,y2)。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_DrawRect(*page, x.f, y.f, w.f, h.f)</div>
+      <div class="function-desc">绘制矩形轮廓。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_FillRect(*page, x.f, y.f, w.f, h.f)</div>
+      <div class="function-desc">填充矩形。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_DrawCircle(*page, x.f, y.f, radius.f)</div>
+      <div class="function-desc">绘制圆形轮廓。圆心 (x,y)，半径 radius。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_FillCircle(*page, x.f, y.f, radius.f)</div>
+      <div class="function-desc">填充圆形。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_DrawEllipse(*page, x.f, y.f, rx.f, ry.f)</div>
+      <div class="function-desc">绘制椭圆轮廓。中心 (x,y)，水平半径 rx，垂直半径 ry。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 颜色与线条 ==================== -->
+  <div class="section" id="color">
+    <h2>颜色与线条</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetRGBFill(*page, r.f, g.f, b.f)</div>
+      <div class="function-desc">设置 RGB 填充颜色。r、g、b 取值范围 0.0 ~ 1.0。</div>
+      <div class="example">
+<span class="function">PbPDF_Page_SetRGBFill</span>(<span class="variable">*page</span>, 1.0, 0.0, 0.0)  <span class="comment">; 红色填充</span>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetRGBStroke(*page, r.f, g.f, b.f)</div>
+      <div class="function-desc">设置 RGB 描边颜色。r、g、b 取值范围 0.0 ~ 1.0。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetCMYKFill(*page, c.f, m.f, y.f, k.f)</div>
+      <div class="function-desc">设置 CMYK 填充颜色。c、m、y、k 取值范围 0.0 ~ 1.0。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetCMYKStroke(*page, c.f, m.f, y.f, k.f)</div>
+      <div class="function-desc">设置 CMYK 描边颜色。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetGrayFill(*page, value.f)</div>
+      <div class="function-desc">设置灰度填充颜色。value 取值范围 0.0（黑）~ 1.0（白）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetGrayStroke(*page, value.f)</div>
+      <div class="function-desc">设置灰度描边颜色。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetLineWidth(*page, width.f)</div>
+      <div class="function-desc">设置线宽（单位：点）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetLineCap(*page, capStyle.i)</div>
+      <div class="function-desc">设置线端样式。0=平端(Butt)，1=圆端(Round)，2=突出方端(Projecting Square)。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetLineJoin(*page, joinStyle.i)</div>
+      <div class="function-desc">设置线连接样式。0=尖角(Miter)，1=圆角(Round)，2=斜角(Bevel)。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetDash(*page, dashOn.f, dashOff.f, phase.f)</div>
+      <div class="function-desc">设置虚线模式。dashOn 为实线长度，dashOff 为虚线间隔，phase 为起始偏移。</div>
+      <div class="example">
+<span class="function">PbPDF_Page_SetDash</span>(<span class="variable">*page</span>, 3, 2, 0)  <span class="comment">; 3点实线 2点间隔</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 图形状态 ==================== -->
+  <div class="section" id="gstate">
+    <h2>图形状态</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_GSave(*page)</div>
+      <div class="function-desc">保存当前图形状态到栈中。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_GRestore(*page)</div>
+      <div class="function-desc">从栈中恢复图形状态。</div>
+      <div class="example">
+<span class="function">PbPDF_Page_GSave</span>(<span class="variable">*page</span>)
+<span class="function">PbPDF_Page_SetRGBFill</span>(<span class="variable">*page</span>, 1.0, 0.0, 0.0)
+<span class="function">PbPDF_Page_FillRect</span>(<span class="variable">*page</span>, 50, 50, 100, 100)
+<span class="function">PbPDF_Page_GRestore</span>(<span class="variable">*page</span>)  <span class="comment">; 恢复之前的填充颜色</span>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_Concat(*page, a.f, b.f, c.f, d.f, x.f, y.f)</div>
+      <div class="function-desc">连接变换矩阵。用于平移、旋转、缩放等变换。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_GStateNewEx(*doc.PbPDF_Doc, fillAlpha.f, strokeAlpha.f, blendMode.i)</div>
+      <div class="function-desc">创建扩展图形状态对象，设置透明度和混合模式。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fillAlpha</td><td>Float</td><td>填充透明度（0.0~1.0）</td></tr>
+          <tr><td>strokeAlpha</td><td>Float</td><td>描边透明度（0.0~1.0）</td></tr>
+          <tr><td>blendMode</td><td>Integer</td><td>混合模式常量</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 扩展图形状态指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_SetExtGState(*doc.PbPDF_Doc, *page, *gstate)</div>
+      <div class="function-desc">将扩展图形状态应用到页面。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 图片操作 ==================== -->
+  <div class="section" id="image">
+    <h2>图片操作</h2>
+
+    <div class="function-block" id="PbPDF_LoadJPEGImageFromFile">
+      <div class="function-name">PbPDF_LoadJPEGImageFromFile(*doc.PbPDF_Doc, fileName.s)</div>
+      <div class="function-desc">从文件加载 JPEG 图片。支持 RGB 和 CMYK 颜色空间的 JPEG 图片。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fileName</td><td>String</td><td>JPEG文件路径</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 图片对象指针（PbPDF_Image）。失败返回 0。</div>
+    </div>
+
+    <div class="function-block" id="PbPDF_LoadPNGImageFromFile">
+      <div class="function-name">PbPDF_LoadPNGImageFromFile(*doc.PbPDF_Doc, fileName.s)</div>
+      <div class="function-desc">从文件加载 PNG 图片。支持灰度、RGB、RGBA（含Alpha通道）和索引色 PNG。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fileName</td><td>String</td><td>PNG文件路径</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 图片对象指针（PbPDF_Image）。失败返回 0。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadCompressedImage(*doc.PbPDF_Doc, fileName.s, scaleFactor.f, jpegQuality.i)</div>
+      <div class="function-desc">加载图片并进行缩放和JPEG压缩。适用于大图片的优化处理。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fileName</td><td>String</td><td>图片文件路径</td></tr>
+          <tr><td>scaleFactor</td><td>Float</td><td>缩放因子（1.0为原始大小）</td></tr>
+          <tr><td>jpegQuality</td><td>Integer</td><td>JPEG压缩质量（0-100）</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 图片对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_Page_DrawImage(*doc.PbPDF_Doc, *page, *image.PbPDF_Image, x.f, y.f, w.f, h.f)</div>
+      <div class="function-desc">在页面上绘制图片。左下角为 (x,y)，宽度 w，高度 h。</div>
+      <div class="example">
+<span class="variable">*img</span> = <span class="function">PbPDF_LoadJPEGImageFromFile</span>(<span class="variable">*doc</span>, <span class="string">"photo.jpg"</span>)
+<span class="function">PbPDF_Page_DrawImage</span>(<span class="variable">*doc</span>, <span class="variable">*page</span>, <span class="variable">*img</span>, 50, 400, 200, 150)
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 字体操作 ==================== -->
+  <div class="section" id="font">
+    <h2>字体操作</h2>
+
+    <div class="function-block" id="PbPDF_LoadTTFontFromFile">
+      <div class="function-name">PbPDF_LoadTTFontFromFile(*doc.PbPDF_Doc, fileName.s, embedding.i = #True)</div>
+      <div class="function-desc">从文件加载 TrueType 字体。支持 TTF 和 TTC 格式。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fileName</td><td>String</td><td>字体文件路径（.ttf 或 .ttc）</td></tr>
+          <tr><td>embedding</td><td>Integer</td><td>是否嵌入字体（#True=嵌入，#False=不嵌入）</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 字体对象指针（PbPDF_Font）。失败返回 0。</div>
+      <div class="example">
+<span class="variable">*font</span>.PbPDF_Font = <span class="function">PbPDF_LoadTTFontFromFile</span>(<span class="variable">*doc</span>, <span class="string">"C:\Windows\Fonts\simhei.ttf"</span>, <span class="variable">#True</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadTTFont(*doc.PbPDF_Doc, fontName.s, embedding.i = #True)</div>
+      <div class="function-desc">按字体名称加载 TrueType 字体。自动在系统字体目录中搜索。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>fontName</td><td>String</td><td>字体名称（如 "微软雅黑"、"SimHei" 等）</td></tr>
+          <tr><td>embedding</td><td>Integer</td><td>是否嵌入字体</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 字体对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_FindSystemFont(fontName.s)</div>
+      <div class="function-desc">在 Windows 系统字体目录中查找指定名称的字体文件路径。</div>
+      <div class="return-type"><strong>返回值：</strong> 字体文件完整路径（字符串）。未找到返回空字符串。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_RegisterTTFont(*doc.PbPDF_Doc, *page, *font.PbPDF_Font)</div>
+      <div class="function-desc">将 TTF 字体注册到页面的字体资源字典中。</div>
+      <div class="return-type"><strong>返回值：</strong> 字体注册名称（如 "F1"、"F2" 等）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_RegisterCIDFont(*doc.PbPDF_Doc, *page, *font.PbPDF_Font)</div>
+      <div class="function-desc">将 CID 字体注册到页面的字体资源字典中（用于 UTF-8 文本）。</div>
+      <div class="return-type"><strong>返回值：</strong> 字体注册名称。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 书签/大纲 ==================== -->
+  <div class="section" id="outline">
+    <h2>书签/大纲</h2>
+
+    <div class="function-block" id="PbPDF_CreateOutline">
+      <div class="function-name">PbPDF_CreateOutline(*doc.PbPDF_Doc, title.s, *parent.PbPDF_Outline, *dest, opened.i = #False)</div>
+      <div class="function-desc">创建一个书签/大纲项。可指定父节点实现多级嵌套。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>title</td><td>String</td><td>大纲标题</td></tr>
+          <tr><td>*parent</td><td>PbPDF_Outline</td><td>父大纲指针（0表示顶级）</td></tr>
+          <tr><td>*dest</td><td>Destination</td><td>跳转目标对象</td></tr>
+          <tr><td>opened</td><td>Integer</td><td>是否展开子项（#True/#False）</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 大纲对象指针。</div>
+      <div class="example">
+<span class="comment">; 创建跳转目标</span>
+<span class="variable">*dest</span> = <span class="function">PbPDF_CreateDestination</span>(<span class="variable">*page</span>, <span class="variable">#PbPDF_DEST_FIT</span>, 0, 0, 0, 0, 0)
+
+<span class="comment">; 创建顶级大纲</span>
+<span class="variable">*outline1</span> = <span class="function">PbPDF_CreateOutline</span>(<span class="variable">*doc</span>, <span class="string">"第一章"</span>, 0, <span class="variable">*dest</span>, <span class="variable">#True</span>)
+
+<span class="comment">; 创建子级大纲</span>
+<span class="variable">*outline1_1</span> = <span class="function">PbPDF_CreateOutline</span>(<span class="variable">*doc</span>, <span class="string">"1.1 概述"</span>, <span class="variable">*outline1</span>, <span class="variable">*dest</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_CreateDestination(*page, destType.i, left.f, top.f, right.f, bottom.f, zoom.f)</div>
+      <div class="function-desc">创建一个跳转目标对象。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*page</td><td>Object</td><td>目标页面对象</td></tr>
+          <tr><td>destType</td><td>Integer</td><td>目标类型常量（XYZ/Fit/FitH/FitV/FitR/FitB/FitBH/FitBV）</td></tr>
+          <tr><td>left, top, right, bottom, zoom</td><td>Float</td><td>目标参数（根据类型使用不同参数）</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 目标对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetOutlineOpened(*outline.PbPDF_Outline, opened.i)</div>
+      <div class="function-desc">设置大纲项的展开/折叠状态。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_ModifyOutlineTitle(*outline.PbPDF_Outline, newTitle.s)</div>
+      <div class="function-desc">修改大纲标题。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_DeleteOutline(*doc.PbPDF_Doc, *outline.PbPDF_Outline)</div>
+      <div class="function-desc">删除指定大纲及其所有子项。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_GetFirstOutline(*doc.PbPDF_Doc)</div>
+      <div class="function-desc">获取文档的第一个顶级大纲项。</div>
+      <div class="return-type"><strong>返回值：</strong> 大纲对象指针。无大纲时返回 0。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_GetOutlineNext(*outline.PbPDF_Outline) / PbPDF_GetOutlineFirst(*outline.PbPDF_Outline)</div>
+      <div class="function-desc">获取大纲的下一个兄弟或第一个子项。</div>
+      <div class="return-type"><strong>返回值：</strong> 大纲对象指针。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 注释 ==================== -->
+  <div class="section" id="annotation">
+    <h2>注释</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_CreateTextAnnot(*doc.PbPDF_Doc, *page, x.f, y.f, width.f, height.f, title.s, contents.s)</div>
+      <div class="function-desc">创建文本注释。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>*page</td><td>Object</td><td>页面对象指针</td></tr>
+          <tr><td>x, y, width, height</td><td>Float</td><td>注释矩形区域</td></tr>
+          <tr><td>title</td><td>String</td><td>注释标题</td></tr>
+          <tr><td>contents</td><td>String</td><td>注释内容</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 注释对象指针。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_CreateLinkAnnot(*doc.PbPDF_Doc, *page, x.f, y.f, width.f, height.f, *dest)</div>
+      <div class="function-desc">创建内部链接注释，跳转到 PDF 内的目标位置。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_CreateURILinkAnnot(*doc.PbPDF_Doc, *page, x.f, y.f, width.f, height.f, uri.s)</div>
+      <div class="function-desc">创建 URI 链接注释，跳转到外部 URL。</div>
+      <div class="example">
+<span class="function">PbPDF_CreateURILinkAnnot</span>(<span class="variable">*doc</span>, <span class="variable">*page</span>, 50, 700, 200, 20, <span class="string">"https://www.example.com"</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_CreateHighlightAnnot(*doc.PbPDF_Doc, *page, x.f, y.f, width.f, height.f, title.s, contents.s, r.f, g.f, b.f)</div>
+      <div class="function-desc">创建高亮注释，可指定高亮颜色。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetAnnotBorder(*annot.PbPDF_Annotation, borderStyle.i, borderWidth.f, dashOn.f, dashOff.f)</div>
+      <div class="function-desc">设置注释的边框样式。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*annot</td><td>PbPDF_Annotation</td><td>注释对象指针</td></tr>
+          <tr><td>borderStyle</td><td>Integer</td><td>边框样式（0=实线/1=虚线/2=斜角/3=凹入/4=下划线）</td></tr>
+          <tr><td>borderWidth</td><td>Float</td><td>边框宽度</td></tr>
+          <tr><td>dashOn</td><td>Float</td><td>虚线实线长度</td></tr>
+          <tr><td>dashOff</td><td>Float</td><td>虚线间隔长度</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== 加密/权限 ==================== -->
+  <div class="section" id="encrypt">
+    <h2>加密/权限</h2>
+
+    <div class="function-block" id="PbPDF_SetPassword">
+      <div class="function-name">PbPDF_SetPassword(*doc.PbPDF_Doc, userPwd.s, ownerPwd.s, permission.i, encryptionMode.i)</div>
+      <div class="function-desc">设置文档密码、权限和加密模式。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>userPwd</td><td>String</td><td>用户密码（打开文档时输入）</td></tr>
+          <tr><td>ownerPwd</td><td>String</td><td>所有者密码（修改权限时输入）</td></tr>
+          <tr><td>permission</td><td>Integer</td><td>权限标志（可组合）</td></tr>
+          <tr><td>encryptionMode</td><td>Integer</td><td>加密模式常量</td></tr>
+        </table>
+      </div>
+      <div class="example">
+<span class="comment">; 使用RC4-128加密，允许打印</span>
+<span class="function">PbPDF_SetPassword</span>(<span class="variable">*doc</span>, <span class="string">"user123"</span>, <span class="string">"owner456"</span>, <span class="variable">#PbPDF_PERM_PRINT</span>, <span class="variable">#PbPDF_ENCRYPT_RC4_128</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetDecryptPassword(*ldoc.PbPDF_LoadedDoc, password.s)</div>
+      <div class="function-desc">为已加载的加密 PDF 提供解密密码。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_RemovePassword(inputFile.s, outputFile.s, ownerPwd.s)</div>
+      <div class="function-desc">移除 PDF 文件的密码保护，生成无加密的新文件。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_ChangePassword(inputFile.s, outputFile.s, oldOwnerPwd.s, newUserPwd.s, newOwnerPwd.s, permission.i, encryptionMode.i)</div>
+      <div class="function-desc">修改 PDF 文件的密码、权限和加密模式。</div>
+    </div>
+
+    <h3>加密模式常量</h3>
+    <table class="function-params">
+      <tr><th>常量</th><th>值</th><th>说明</th></tr>
+      <tr><td>#PbPDF_ENCRYPT_RC4_40</td><td>0</td><td>RC4 40位加密</td></tr>
+      <tr><td>#PbPDF_ENCRYPT_RC4_128</td><td>1</td><td>RC4 128位加密</td></tr>
+      <tr><td>#PbPDF_ENCRYPT_AES_128</td><td>2</td><td>AES 128位加密</td></tr>
+      <tr><td>#PbPDF_ENCRYPT_AES_256</td><td>3</td><td>AES 256位加密</td></tr>
+    </table>
+
+    <h3>权限标志常量</h3>
+    <table class="function-params">
+      <tr><th>常量</th><th>值</th><th>说明</th></tr>
+      <tr><td>#PbPDF_PERM_PRINT</td><td>4</td><td>允许打印</td></tr>
+      <tr><td>#PbPDF_PERM_EDIT_ALL</td><td>8</td><td>允许完全编辑</td></tr>
+      <tr><td>#PbPDF_PERM_COPY</td><td>16</td><td>允许复制</td></tr>
+      <tr><td>#PbPDF_PERM_EDIT</td><td>32</td><td>允许部分编辑</td></tr>
+      <tr><td>#PbPDF_PERM_FILL_FORM</td><td>256</td><td>允许填写表单</td></tr>
+      <tr><td>#PbPDF_PERM_EXTRACT</td><td>512</td><td>允许提取内容</td></tr>
+      <tr><td>#PbPDF_PERM_ASSEMBLE</td><td>1024</td><td>允许组合</td></tr>
+      <tr><td>#PbPDF_PERM_PRINT_HIRES</td><td>2048</td><td>允许高质量打印</td></tr>
+    </table>
+  </div>
+
+  <!-- ==================== 水印 ==================== -->
+  <div class="section" id="watermark">
+    <h2>水印</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_AddTextWatermark(*doc.PbPDF_Doc, text.s, fontSize.f, rotation.f, opacity.f, r.f, g.f, b.f, diagonal.i, fontName.s = "F1")</div>
+      <div class="function-desc">在文档所有页面上添加文本水印。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>text</td><td>String</td><td>水印文本</td></tr>
+          <tr><td>fontSize</td><td>Float</td><td>字体大小</td></tr>
+          <tr><td>rotation</td><td>Float</td><td>旋转角度（度）</td></tr>
+          <tr><td>opacity</td><td>Float</td><td>透明度（0.0~1.0）</td></tr>
+          <tr><td>r, g, b</td><td>Float</td><td>水印颜色（0.0~1.0）</td></tr>
+          <tr><td>diagonal</td><td>Integer</td><td>是否对角线放置（#True/#False）</td></tr>
+          <tr><td>fontName</td><td>String</td><td>字体名称（默认"F1"）</td></tr>
+        </table>
+      </div>
+      <div class="example">
+<span class="function">PbPDF_AddTextWatermark</span>(<span class="variable">*doc</span>, <span class="string">"机密文件"</span>, 60, 45, 0.3, 0.8, 0.0, 0.0, <span class="variable">#True</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_AddWatermarkToFile(inputFile.s, outputFile.s, text.s, fontSize.f, angle.f, r.f, g.f, b.f)</div>
+      <div class="function-desc">为已有的 PDF 文件添加水印，生成新文件。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_AddHeaderFooter(inputFile.s, outputFile.s, headerText.s, footerText.s, fontSize.f)</div>
+      <div class="function-desc">为已有的 PDF 文件添加页眉和页脚文本。</div>
+    </div>
+  </div>
+
+  <!-- ==================== PDF读取 ==================== -->
+  <div class="section" id="read">
+    <h2>PDF读取/解析</h2>
+
+    <div class="function-block" id="PbPDF_LoadFromFile">
+      <div class="function-name">PbPDF_LoadFromFile(fileName.s)</div>
+      <div class="function-desc">从文件读取 PDF 并解析其内部结构。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>fileName</td><td>String</td><td>PDF文件路径</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 已加载文档对象指针（PbPDF_LoadedDoc）。失败返回 0。</div>
+      <div class="example">
+<span class="variable">*ldoc</span>.PbPDF_LoadedDoc = <span class="function">PbPDF_LoadFromFile</span>(<span class="string">"input.pdf"</span>)
+<span class="keyword">If</span> <span class="variable">*ldoc</span>
+  <span class="variable">pages</span> = <span class="function">PbPDF_LoadGetPageCount</span>(<span class="variable">*ldoc</span>)
+  <span class="function">Debug</span> <span class="string">"页数: "</span> + <span class="variable">pages</span>
+<span class="keyword">EndIf</span>
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadGetPageCount(*ldoc.PbPDF_LoadedDoc)</div>
+      <div class="function-desc">获取已加载 PDF 的页面数量。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面数量（整数）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadGetPageSize(*ldoc.PbPDF_LoadedDoc, pageIndex.i, *width.FLOAT, *height.FLOAT)</div>
+      <div class="function-desc">获取指定页面的尺寸。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadGetInfoAttr(*ldoc.PbPDF_LoadedDoc, attrKey.s)</div>
+      <div class="function-desc">获取文档属性值。attrKey 如 "Title"、"Author"、"Subject" 等。</div>
+      <div class="return-type"><strong>返回值：</strong> 属性值（字符串）。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadGetVersion(*ldoc.PbPDF_LoadedDoc)</div>
+      <div class="function-desc">获取 PDF 版本字符串（如 "1.4"、"1.7" 等）。</div>
+      <div class="return-type"><strong>返回值：</strong> 版本字符串。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_LoadGetPageContent(*ldoc.PbPDF_LoadedDoc, pageIndex.i)</div>
+      <div class="function-desc">获取指定页面的内容流文本。</div>
+      <div class="return-type"><strong>返回值：</strong> 页面内容流（字符串）。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 页面操作 ==================== -->
+  <div class="section" id="pageop">
+    <h2>PDF页面操作</h2>
+
+    <div class="function-block" id="PbPDF_MergePDFFiles">
+      <div class="function-name">PbPDF_MergePDFFiles(outputFileName.s, inputFiles.s)</div>
+      <div class="function-desc">合并多个 PDF 文件为一个文件。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>outputFileName</td><td>String</td><td>输出文件路径</td></tr>
+          <tr><td>inputFiles</td><td>String</td><td>输入文件列表，用 "|" 分隔</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 成功返回 #PbPDF_OK，失败返回错误码。</div>
+      <div class="example">
+<span class="variable">result</span> = <span class="function">PbPDF_MergePDFFiles</span>(<span class="string">"merged.pdf"</span>, <span class="string">"file1.pdf|file2.pdf|file3.pdf"</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_ExtractPages(inputFile.s, outputFile.s, startPage.i, endPage.i)</div>
+      <div class="function-desc">从 PDF 文件中提取指定页面范围，生成新文件。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>inputFile</td><td>String</td><td>输入PDF文件路径</td></tr>
+          <tr><td>outputFile</td><td>String</td><td>输出PDF文件路径</td></tr>
+          <tr><td>startPage</td><td>Integer</td><td>起始页码（从1开始）</td></tr>
+          <tr><td>endPage</td><td>Integer</td><td>结束页码</td></tr>
+        </table>
+      </div>
+      <div class="return-type"><strong>返回值：</strong> 成功返回 #PbPDF_OK。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SplitPDF(inputFile.s, outputPrefix.s)</div>
+      <div class="function-desc">将 PDF 文件按页拆分为多个单页文件。输出文件名格式：前缀_001.pdf、前缀_002.pdf 等。</div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_DeletePages(inputFile.s, outputFile.s, startPage.i, endPage.i)</div>
+      <div class="function-desc">删除 PDF 文件中指定页面范围，生成新文件。</div>
+    </div>
+  </div>
+
+  <!-- ==================== 文档信息 ==================== -->
+  <div class="section" id="info">
+    <h2>文档信息</h2>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_SetInfoAttr(*doc.PbPDF_Doc, attrType.i, value.s)</div>
+      <div class="function-desc">设置文档属性。</div>
+      <div class="function-params">
+        <table>
+          <tr><th>参数</th><th>类型</th><th>说明</th></tr>
+          <tr><td>*doc</td><td>PbPDF_Doc</td><td>PDF文档指针</td></tr>
+          <tr><td>attrType</td><td>Integer</td><td>属性类型常量</td></tr>
+          <tr><td>value</td><td>String</td><td>属性值</td></tr>
+        </table>
+      </div>
+      <div class="example">
+<span class="function">PbPDF_SetInfoAttr</span>(<span class="variable">*doc</span>, <span class="variable">#PbPDF_INFO_TITLE</span>, <span class="string">"我的文档"</span>)
+<span class="function">PbPDF_SetInfoAttr</span>(<span class="variable">*doc</span>, <span class="variable">#PbPDF_INFO_AUTHOR</span>, <span class="string">"lcode.cn"</span>)
+      </div>
+    </div>
+
+    <div class="function-block">
+      <div class="function-name">PbPDF_GetInfoAttr(*doc.PbPDF_Doc, attrType.i)</div>
+      <div class="function-desc">获取文档属性值。</div>
+      <div class="return-type"><strong>返回值：</strong> 属性值（字符串）。</div>
+    </div>
+
+    <h3>文档信息属性常量</h3>
+    <table class="function-params">
+      <tr><th>常量</th><th>值</th><th>说明</th></tr>
+      <tr><td>#PbPDF_INFO_AUTHOR</td><td>0</td><td>作者</td></tr>
+      <tr><td>#PbPDF_INFO_CREATOR</td><td>1</td><td>创建者</td></tr>
+      <tr><td>#PbPDF_INFO_PRODUCER</td><td>2</td><td>生产者</td></tr>
+      <tr><td>#PbPDF_INFO_TITLE</td><td>3</td><td>标题</td></tr>
+      <tr><td>#PbPDF_INFO_SUBJECT</td><td>4</td><td>主题</td></tr>
+      <tr><td>#PbPDF_INFO_KEYWORDS</td><td>5</td><td>关键词</td></tr>
+      <tr><td>#PbPDF_INFO_CREATION_DATE</td><td>6</td><td>创建日期</td></tr>
+      <tr><td>#PbPDF_INFO_MOD_DATE</td><td>7</td><td>修改日期</td></tr>
+    </table>
+  </div>
+
+  <!-- ==================== 示例代码 ==================== -->
+  <div class="section" id="examples">
+    <h2>示例代码</h2>
+
+    <h3>示例1：创建基本PDF文档</h3>
+    <div class="example">
+<span class="comment">; PbPDFlib - 创建基本PDF文档示例</span>
+<span class="keyword">XIncludeFile</span> <span class="string">"PbPDFlib.pb"</span>
+
+<span class="comment">; 创建文档</span>
+<span class="variable">*doc</span>.PbPDF_Doc = <span class="function">PbPDF_New</span>()
+
+<span class="comment">; 添加A4页面</span>
+<span class="variable">*page</span> = <span class="function">PbPDF_AddPage</span>(<span class="variable">*doc</span>)
+<span class="function">PbPDF_Page_SetPredefinedSize</span>(<span class="variable">*page</span>, <span class="variable">#PbPDF_PAGE_SIZE_A4</span>, <span class="variable">#PbPDF_PAGE_PORTRAIT</span>)
+
+<span class="comment">; 写入文本</span>
+<span class="function">PbPDF_Page_BeginText</span>(<span class="variable">*page</span>)
+<span class="function">PbPDF_Page_SetFontAndSize</span>(<span class="variable">*page</span>, <span class="string">"Helvetica"</span>, 24)
+<span class="function">PbPDF_Page_MoveTextPos</span>(<span class="variable">*page</span>, 50, 750)
+<span class="function">PbPDF_Page_ShowText</span>(<span class="variable">*page</span>, <span class="string">"Hello PbPDFlib!"</span>)
+<span class="function">PbPDF_Page_EndText</span>(<span class="variable">*page</span>)
+
+<span class="comment">; 保存文件</span>
+<span class="function">PbPDF_SaveToFile</span>(<span class="variable">*doc</span>, <span class="string">"example1.pdf"</span>)
+<span class="function">PbPDF_Free</span>(<span class="variable">*doc</span>)
+    </div>
+
+    <h3>示例2：绘制图形</h3>
+    <div class="example">
+<span class="comment">; PbPDFlib - 绘制图形示例</span>
+<span class="keyword">XIncludeFile</span> <span class="string">"PbPDFlib.pb"</span>
+
+<span class="variable">*doc</span>.PbPDF_Doc = <span class="function">PbPDF_New</span>()
+<span class="variable">*page</span> = <span class="function">PbPDF_AddPageA4</span>(<span class="variable">*doc</span>)
+
+<span class="comment">; 绘制红色矩形</span>
+<span class="function">PbPDF_Page_SetRGBFill</span>(<span class="variable">*page</span>, 1.0, 0.0, 0.0)
+<span class="function">PbPDF_Page_FillRect</span>(<span class="variable">*page</span>, 50, 600, 200, 100)
+
+<span class="comment">; 绘制蓝色圆形</span>
+<span class="function">PbPDF_Page_SetRGBFill</span>(<span class="variable">*page</span>, 0.0, 0.0, 1.0)
+<span class="function">PbPDF_Page_FillCircle</span>(<span class="variable">*page</span>, 400, 650, 50)
+
+<span class="comment">; 绘制绿色线条</span>
+<span class="function">PbPDF_Page_SetRGBStroke</span>(<span class="variable">*page</span>, 0.0, 0.8, 0.0)
+<span class="function">PbPDF_Page_SetLineWidth</span>(<span class="variable">*page</span>, 3)
+<span class="function">PbPDF_Page_DrawLine</span>(<span class="variable">*page</span>, 50, 500, 500, 500)
+
+<span class="function">PbPDF_SaveToFile</span>(<span class="variable">*doc</span>, <span class="string">"example2_graphics.pdf"</span>)
+<span class="function">PbPDF_Free</span>(<span class="variable">*doc</span>)
+    </div>
+
+    <h3>示例3：中文文本和加密</h3>
+    <div class="example">
+<span class="comment">; PbPDFlib - 中文文本和加密示例</span>
+<span class="keyword">XIncludeFile</span> <span class="string">"PbPDFlib.pb"</span>
+
+<span class="variable">*doc</span>.PbPDF_Doc = <span class="function">PbPDF_New</span>()
+<span class="variable">*page</span> = <span class="function">PbPDF_AddPageA4</span>(<span class="variable">*doc</span>)
+
+<span class="comment">; 加载中文字体</span>
+<span class="variable">*font</span>.PbPDF_Font = <span class="function">PbPDF_LoadTTFontFromFile</span>(<span class="variable">*doc</span>, <span class="string">"C:\Windows\Fonts\msyh.ttc"</span>, <span class="variable">#True</span>)
+
+<span class="comment">; 显示中文</span>
+<span class="function">PbPDF_Page_ShowTextUTF8Ex</span>(<span class="variable">*doc</span>, <span class="variable">*page</span>, <span class="variable">*font</span>, <span class="string">"你好，PbPDFlib！"</span>, 36)
+
+<span class="comment">; 设置加密</span>
+<span class="function">PbPDF_SetPassword</span>(<span class="variable">*doc</span>, <span class="string">"user"</span>, <span class="string">"owner"</span>, <span class="variable">#PbPDF_PERM_PRINT</span>, <span class="variable">#PbPDF_ENCRYPT_RC4_128</span>)
+
+<span class="function">PbPDF_SaveToFile</span>(<span class="variable">*doc</span>, <span class="string">"example3_chinese_encrypted.pdf"</span>)
+<span class="function">PbPDF_Free</span>(<span class="variable">*doc</span>)
+    </div>
+  </div>
+
+  <!-- ==================== 版本历史 ==================== -->
+  <div class="section" id="changelog">
+    <h2>版本历史</h2>
+
+    <h3>v6.7 (2026-04-26)</h3>
+    <ul>
+      <li>[修复] PDF标准密码填充字符串(PbPDF_EncryptPadding)错误，导致加密PDF无法被第三方软件打开</li>
+      <li>[修复] PbPDF_SetDecryptPassword函数缺少R3(RC4-128)的50次MD5迭代</li>
+      <li>[修复] 测试文件路径问题，统一使用GetPathPart(ProgramFilename())获取输出目录</li>
+      <li>[新增] 捐赠/赞助信息</li>
+      <li>[新增] 英文版README和帮助文档</li>
+    </ul>
+
+    <h3>v6.6 (2026-04-26)</h3>
+    <ul>
+      <li>[新增] 生成HTML帮助文档（PbPDFlib_Help.html）</li>
+      <li>[新增] 添加README.md文档</li>
+      <li>[新增] 功能参考来源对照表（infos.md）</li>
+      <li>[优化] 完善代码注释和文档</li>
+    </ul>
+
+    <h3>v6.5 (2026-03-05)</h3>
+    <ul>
+      <li>[新增] 大纲删除功能（PbPDF_DeleteOutline）</li>
+      <li>[新增] 大纲树释放和取消链接功能</li>
+      <li>[新增] 大纲遍历API</li>
+    </ul>
+
+    <h3>v6.4 (2026-01-29)</h3>
+    <ul>
+      <li>[新增] 大纲颜色修改（PbPDF_ModifyOutlineColor）</li>
+      <li>[新增] 大纲样式修改（PbPDF_ModifyOutlineStyle）</li>
+    </ul>
+
+    <h3>v6.3 (2025-12-27)</h3>
+    <ul>
+      <li>[新增] 大纲标题修改（PbPDF_ModifyOutlineTitle）</li>
+      <li>[新增] 大纲目标修改（PbPDF_ModifyOutlineDest）</li>
+    </ul>
+
+    <h3>v6.2 (2025-11-24)</h3>
+    <ul>
+      <li>[新增] PDF版本设置功能（PbPDF_SetPDFVersion）</li>
+      <li>[新增] 压缩模式设置（PbPDF_SetCompressionMode）</li>
+    </ul>
+
+    <h3>v6.1 (2025-10-22)</h3>
+    <ul>
+      <li>[新增] 便捷绘图函数（DrawLine/DrawRect/FillRect/DrawCircle等）</li>
+      <li>[新增] 弧线绘制（PbPDF_Page_Arc）</li>
+    </ul>
+
+    <h3>v6.0 (2025-09-19)</h3>
+    <ul>
+      <li>[新增] PDF密码修改功能（PbPDF_ChangePassword）</li>
+      <li>[新增] PDF密码移除功能（PbPDF_RemovePassword）</li>
+    </ul>
+
+    <h3>v5.9 (2025-08-17)</h3>
+    <ul>
+      <li>[新增] PDF解密功能（PbPDF_SetDecryptPassword）</li>
+      <li>[新增] 加密PDF文件读取支持</li>
+    </ul>
+
+    <h3>v5.8 (2025-07-15)</h3>
+    <ul>
+      <li>[新增] 页眉页脚功能（PbPDF_AddHeaderFooter）</li>
+      <li>[新增] 文件级水印功能（PbPDF_AddWatermarkToFile）</li>
+    </ul>
+
+    <h3>v5.7 (2025-06-12)</h3>
+    <ul>
+      <li>[新增] PDF删除页面功能（PbPDF_DeletePages）</li>
+      <li>[新增] PDF拆分功能（PbPDF_SplitPDF）</li>
+    </ul>
+
+    <h3>v5.6 (2025-05-10)</h3>
+    <ul>
+      <li>[新增] PDF提取页面功能（PbPDF_ExtractPages）</li>
+      <li>[新增] PDF合并功能（PbPDF_MergePDFFiles）</li>
+    </ul>
+
+    <h3>v5.0 (2024-10-24)</h3>
+    <ul>
+      <li>[新增] PDF文件读取框架搭建</li>
+      <li>[优化] 整体架构调整，支持读取模式</li>
+    </ul>
+
+    <h3>v4.0 (2023-11-29)</h3>
+    <ul>
+      <li>[新增] 书签/大纲创建（PbPDF_CreateOutline）</li>
+      <li>[新增] 跳转目标（PbPDF_CreateDestination）</li>
+    </ul>
+
+    <h3>v3.6 (2023-07-20)</h3>
+    <ul>
+      <li>[新增] PDF加密功能（PbPDF_SetPassword）</li>
+      <li>[新增] RC4-40加密支持</li>
+      <li>[新增] MD5哈希算法实现</li>
+    </ul>
+
+    <h3>v3.3 (2023-04-12)</h3>
+    <ul>
+      <li>[新增] JPEG图片加载（PbPDF_LoadJPEGImageFromFile）</li>
+      <li>[新增] 图片绘制（PbPDF_Page_DrawImage）</li>
+    </ul>
+
+    <h3>v3.0 (2023-01-03)</h3>
+    <ul>
+      <li>[新增] UTF-8文本高级显示（PbPDF_Page_ShowTextUTF8Ex）</li>
+      <li>[优化] UTF-8编码流程重构</li>
+    </ul>
+
+    <h3>v2.4 (2022-06-19)</h3>
+    <ul>
+      <li>[新增] TTF字体加载（PbPDF_LoadTTFontFromFile）</li>
+      <li>[新增] TTF文件头和表解析</li>
+    </ul>
+
+    <h3>v2.0 (2022-02-07)</h3>
+    <ul>
+      <li>[新增] 图形状态栈（GSave/GRestore）</li>
+      <li>[新增] 变换矩阵（PbPDF_Page_Concat）</li>
+    </ul>
+
+    <h3>v1.4 (2021-07-25)</h3>
+    <ul>
+      <li>[新增] 文本绘制功能（BeginText/EndText/ShowText等）</li>
+      <li>[新增] 字体和大小设置</li>
+    </ul>
+
+    <h3>v1.0 (2021-03-15)</h3>
+    <ul>
+      <li>[新增] 初始项目创建，参考pdfcpu和libharu编写</li>
+      <li>[新增] PDF对象模型</li>
+      <li>[新增] 内存管理和流处理模块</li>
+      <li>[新增] 交叉引用表结构</li>
+      <li>[新增] 基础算法（CRC32/ASCIIHex/UTF8解码等）</li>
+    </ul>
+  </div>
+
+  <div class="footer">
+    <p>PbPDFlib Library v6.7 | 作者: lcode.cn | 许可证: Apache 2.0</p>
+    <p style="margin-top:10px;">如果 PbPDFlib 对您有帮助，欢迎赞助支持！</p>
+    <p>PayPal: <a href="https://www.paypal.me/lcodecn" style="color:#c0392b;">https://www.paypal.me/lcodecn</a> | 微信支付: #付款:lcodecn(经营_lcodecn)/openlib/003</p>
+  </div>
+
+</div>
+
+</body>
+</html>
