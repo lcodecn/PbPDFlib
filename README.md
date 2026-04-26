@@ -1,4 +1,4 @@
-# PbPDFlib Library v6.6
+# PbPDFlib Library v6.7
 
 PbPDFlib \- PureBasic PDF 操作库
 
